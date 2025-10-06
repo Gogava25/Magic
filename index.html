@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MegaTool Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .user-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .user-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .user-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #007bff;
+        }
+        
+        .logs-container {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            background: #f8f9fa;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 2px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .log-time {
+            color: #666;
+            font-size: 0.8em;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .status-active { background-color: #28a745; }
+        .status-inactive { background-color: #dc3545; }
+        .status-pending { background-color: #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MegaTool Dashboard</h1>
+        <div id="users-container"></div>
+    </div>
+
+    <script>
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/api/users');
+                const users = await response.json();
+                
+                const container = document.getElementById('users-container');
+                container.innerHTML = '';
+                
+                for (const [userId, userData] of Object.entries(users)) {
+                    const userCard = createUserCard(userId, userData);
+                    container.appendChild(userCard);
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+        
+        function createUserCard(userId, userData) {
+            const card = document.createElement('div');
+            card.className = 'user-card';
+            
+            const isActive = isWithinActiveWindow(userData);
+            const statusClass = isActive ? 'status-active' : 'status-inactive';
+            
+            card.innerHTML = `
+                <div class="user-header">
+                    <h2>User: ${userId}</h2>
+                    <span class="status-indicator ${statusClass}"></span>
+                    <span>${isActive ? 'Active' : 'Inactive'}</span>
+                </div>
+                
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Spins Today</div>
+                        <div class="stat-value">${userData.spinCount || 0}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Achievements Claimed</div>
+                        <div class="stat-value">${userData.achievementsClaimed || 0}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Current Funds</div>
+                        <div class="stat-value">${(userData.lastFunds || 0).toLocaleString()}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Last Refresh</div>
+                        <div>${userData.lastRefresh ? new Date(userData.lastRefresh).toLocaleString() : 'Never'}</div>
+                    </div>
+                </div>
+                
+                <h4>Recent Activity</h4>
+                <div class="logs-container" id="logs-${userId}">
+                    Loading...
+                </div>
+                
+                <div style="margin-top: 10px;">
+                    <button onclick="refreshToken('${userId}')">Refresh Token</button>
+                    <button onclick="executeSpin('${userId}')">Spin Now</button>
+                    <button onclick="refreshUserLogs('${userId}')">Refresh Logs</button>
+                </div>
+            `;
+            
+            // Load initial logs
+            refreshUserLogs(userId);
+            
+            return card;
+        }
+        
+        async function refreshUserLogs(userId) {
+            try {
+                const response = await fetch(`/api/user/${userId}/activity?limit=20`);
+                const logs = await response.json();
+                
+                const logsContainer = document.getElementById(`logs-${userId}`);
+                logsContainer.innerHTML = '';
+                
+                logs.forEach(log => {
+                    const logEntry = document.createElement('div');
+                    logEntry.className = 'log-entry';
+                    logEntry.innerHTML = `
+                        <span class="log-time">${new Date(log.timestamp).toLocaleTimeString()}</span>
+                        ${log.message}
+                    `;
+                    logsContainer.appendChild(logEntry);
+                });
+            } catch (error) {
+                console.error('Error loading logs:', error);
+            }
+        }
+        
+        async function refreshToken(userId) {
+            try {
+                const response = await fetch(`/api/user/${userId}/refresh`, { method: 'POST' });
+                const result = await response.json();
+                alert(result.message);
+                loadDashboard();
+            } catch (error) {
+                console.error('Error refreshing token:', error);
+            }
+        }
+        
+        async function executeSpin(userId) {
+            try {
+                const response = await fetch(`/api/user/${userId}/spin`, { method: 'POST' });
+                const result = await response.json();
+                alert(result.success ? `Spin result: ${result.result}` : 'Spin failed');
+                loadDashboard();
+            } catch (error) {
+                console.error('Error executing spin:', error);
+            }
+        }
+        
+        function isWithinActiveWindow(userData) {
+            const now = new Date();
+            const currentUTC = now.getUTCHours() * 60 + now.getUTCMinutes();
+            
+            const startTime = userData.dayStart.split(':').map(Number);
+            const endTime = userData.dayEnd.split(':').map(Number);
+            
+            const dayStart = startTime[0] * 60 + startTime[1];
+            const dayEnd = endTime[0] * 60 + endTime[1];
+            
+            return currentUTC >= dayStart && currentUTC <= dayEnd;
+        }
+        
+        // Refresh dashboard every 30 seconds
+        loadDashboard();
+        setInterval(loadDashboard, 30000);
+    </script>
+</body>
+</html>
