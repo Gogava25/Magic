@@ -1,1 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MegaTool Bot Dashboard</title>
+    <style>
+        /* Add user selector styles */
+        .user-selector {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #ecf0f1;
+            border-radius: 4px;
+        }
+        
+        .user-selector select {
+            padding: 8px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .all-users-view .user-card {
+            border: 2px solid #3498db;
+            margin-bottom: 20px;
+            border-radius: 6px;
+        }
+        
+        .user-card-header {
+            background: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px 4px 0 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MegaTool Bot Dashboard</h1>
+        
+        <div class="user-selector">
+            <label for="userSelect">Select User: </label>
+            <select id="userSelect">
+                <option value="all">All Users Overview</option>
+            </select>
+            <button onclick="refreshUserList()">Refresh List</button>
+        </div>
+        
+        <div class="controls">
+            <button onclick="refreshToken()">Refresh JWT Token</button>
+            <button onclick="checkFunds()">Check Funds</button>
+            <button onclick="checkAchievements()">Check Achievements</button>
+            <button onclick="manualSpin()">Manual Spin</button>
+            <button onclick="refreshAll()">Refresh All</button>
+        </div>
+        
+        <div id="dashboard-content">
+            <!-- Content will be populated by JavaScript -->
+        </div>
+        
+        <h2>Activity Log</h2>
+        <div class="log-container" id="activity-log">
+            Loading...
+        </div>
+    </div>
 
+    <script>
+        let currentUserId = 'all';
+        let usersList = [];
+        
+        // Load users list
+        async function loadUsersList() {
+            try {
+                const response = await fetch('/api/users');
+                usersList = await response.json();
+                
+                const userSelect = document.getElementById('userSelect');
+                userSelect.innerHTML = '<option value="all">All Users Overview</option>';
+                
+                usersList.forEach(userId => {
+                    const option = document.createElement('option');
+                    option.value = userId;
+                    option.textContent = userId;
+                    userSelect.appendChild(option);
+                });
+                
+                userSelect.value = currentUserId;
+            } catch (error) {
+                console.error('Error loading users list:', error);
+            }
+        }
+        
+        // Update dashboard based on user selection
+        function updateDashboard(data) {
+            const dashboardContent = document.getElementById('dashboard-content');
+            
+            if (currentUserId === 'all') {
+                // Show overview of all users
+                dashboardContent.innerHTML = `
+                    <div class="all-users-view">
+                        <h2>All Users Overview</h2>
+                        <div class="status-grid">
+                            ${Object.keys(data.users).map(userId => {
+                                const user = data.users[userId];
+                                return `
+                                    <div class="status-card user-card">
+                                        <div class="user-card-header">
+                                            <h3>${userId}</h3>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span>Status:</span>
+                                            <span class="${user.system.status === 'active' ? 'active' : 'inactive'}">
+                                                ${user.system.status.toUpperCase()}
+                                            </span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span>Active Window:</span>
+                                            <span>${user.system.activeWindow}</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span>JWT:</span>
+                                            <span class="${user.authentication.hasJWT ? 'active' : 'inactive'}">
+                                                ${user.authentication.hasJWT ? 'VALID' : 'MISSING'}
+                                            </span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span>Spins Today:</span>
+                                            <span>${user.statistics.spinner.spinsToday}</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span>Silver:</span>
+                                            <span><strong>${user.statistics.funds.currentSilver.toLocaleString()}</strong></span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span>Next Spin:</span>
+                                            <span>${user.statistics.spinner.nextSpin ? new Date(user.statistics.spinner.nextSpin).toLocaleString() : 'N/A'}</span>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Show detailed view for single user
+                dashboardContent.innerHTML = `
+                    <div class="status-grid">
+                        <div class="status-card">
+                            <h3>System Status - ${data.userId}</h3>
+                            <div id="system-status">Loading...</div>
+                        </div>
+                        <div class="status-card">
+                            <h3>Authentication</h3>
+                            <div id="auth-status">Loading...</div>
+                        </div>
+                        <div class="status-card">
+                            <h3>Spinner Statistics</h3>
+                            <div id="spinner-stats">Loading...</div>
+                        </div>
+                        <div class="status-card">
+                            <h3>Achievements</h3>
+                            <div id="achievement-stats">Loading...</div>
+                        </div>
+                        <div class="status-card">
+                            <h3>Funds</h3>
+                            <div id="fund-stats">Loading...</div>
+                        </div>
+                        <div class="status-card">
+                            <h3>Recent Spin Results</h3>
+                            <div class="spinner-results" id="spin-results">Loading...</div>
+                        </div>
+                    </div>
+                `;
+                
+                // Update detailed status for single user
+                updateDetailedUserView(data);
+            }
+        }
+        
+        function updateDetailedUserView(data) {
+            // System Status
+            document.getElementById('system-status').innerHTML = `
+                <div class="stat-item">
+                    <span>Status:</span>
+                    <span class="${data.system.status === 'active' ? 'active' : 'inactive'}">
+                        ${data.system.status.toUpperCase()}
+                    </span>
+                </div>
+                <div class="stat-item">
+                    <span>Current Time:</span>
+                    <span>${new Date(data.system.currentTime).toLocaleString()}</span>
+                </div>
+                <div class="stat-item">
+                    <span>Active Window:</span>
+                    <span>${data.system.activeWindow}</span>
+                </div>
+                <div class="stat-item">
+                    <span>Within Window:</span>
+                    <span class="${data.system.withinActiveWindow ? 'active' : 'inactive'}">
+                        ${data.system.withinActiveWindow ? 'YES' : 'NO'}
+                    </span>
+                </div>
+            `;
+            
+            // Authentication Status
+            document.getElementById('auth-status').innerHTML = `
+                <div class="stat-item">
+                    <span>JWT Token:</span>
+                    <span class="${data.authentication.hasJWT ? 'active' : 'inactive'}">
+                        ${data.authentication.hasJWT ? 'VALID' : 'MISSING'}
+                    </span>
+                </div>
+                <div class="stat-item">
+                    <span>Last Refresh:</span>
+                    <span>${data.authentication.lastRefresh ? new Date(data.authentication.lastRefresh).toLocaleString() : 'Never'}</span>
+                </div>
+                <div class="stat-item">
+                    <span>Expires:</span>
+                    <span>${data.authentication.jwtExpiry ? new Date(data.authentication.jwtExpiry).toLocaleString() : 'Unknown'}</span>
+                </div>
+            `;
+            
+            // Spinner Statistics
+            document.getElementById('spinner-stats').innerHTML = `
+                <div class="stat-item">
+                    <span>Total Spins:</span>
+                    <span>${data.statistics.spinner.totalSpins}</span>
+                </div>
+                <div class="stat-item">
+                    <span>Spins Today:</span>
+                    <span>${data.statistics.spinner.spinsToday}</span>
+                </div>
+                <div class="stat-item">
+                    <span>Last Spin:</span>
+                    <span>${data.statistics.spinner.lastSpin ? new Date(data.statistics.spinner.lastSpin).toLocaleString() : 'Never'}</span>
+                </div>
+                <div class="stat-item">
+                    <span>Next Spin:</span>
+                    <span>${data.statistics.spinner.nextSpin ? new Date(data.statistics.spinner.nextSpin).toLocaleString() : 'Calculating...'}</span>
+                </div>
+            `;
+            
+            // Achievement Statistics
+            document.getElementById('achievement-stats').innerHTML = `
+                <div class="stat-item">
+                    <span>Total Claimed:</span>
+                    <span>${data.statistics.achievements.totalClaimed}</span>
+                </div>
+                <div class="stat-item">
+                    <span>Claimed Today:</span>
+                    <span>${data.statistics.achievements.claimedToday}</span>
+                </div>
+                <div class="stat-item">
+                    <span>Last Check:</span>
+                    <span>${data.statistics.achievements.lastCheck ? new Date(data.statistics.achievements.lastCheck).toLocaleString() : 'Never'}</span>
+                </div>
+            `;
+            
+            // Fund Statistics
+            document.getElementById('fund-stats').innerHTML = `
+                <div class="stat-item">
+                    <span>Current Silver:</span>
+                    <span><strong>${data.statistics.funds.currentSilver.toLocaleString()}</strong></span>
+                </div>
+                <div class="stat-item">
+                    <span>Last Update:</span>
+                    <span>${data.statistics.funds.lastUpdate ? new Date(data.statistics.funds.lastUpdate).toLocaleString() : 'Never'}</span>
+                </div>
+            `;
+            
+            // Recent Spin Results
+            const spinResults = data.statistics.spinner.spinResults.slice(0, 10);
+            document.getElementById('spin-results').innerHTML = spinResults.length > 0 
+                ? spinResults.map(spin => `
+                    <div class="stat-item">
+                        <span>${new Date(spin.timestamp).toLocaleTimeString()}</span>
+                        <span>${spin.resultName}</span>
+                    </div>
+                `).join('')
+                : 'No spins yet';
+        }
+        
+        // Event listener for user selection
+        document.getElementById('userSelect').addEventListener('change', function() {
+            currentUserId = this.value;
+            refreshAll();
+        });
+        
+        // Modified control functions to include user ID
+        async function refreshToken() {
+            if (currentUserId === 'all') {
+                alert('Please select a specific user');
+                return;
+            }
+            
+            const response = await fetch('/api/refresh-token', { 
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: currentUserId })
+            });
+            const result = await response.json();
+            alert(result.success ? 'Token refreshed successfully' : 'Token refresh failed: ' + result.error);
+            refreshAll();
+        }
+        
+        async function checkFunds() {
+            if (currentUserId === 'all') {
+                alert('Please select a specific user');
+                return;
+            }
+            
+            const response = await fetch('/api/check-funds', { 
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: currentUserId })
+            });
+            const result = await response.json();
+            alert(result.success ? `Funds: ${result.silvercoins.toLocaleString()} silver` : 'Funds check failed');
+            refreshAll();
+        }
+        
+        async function manualSpin() {
+            if (currentUserId === 'all') {
+                alert('Please select a specific user');
+                return;
+            }
+            
+            const response = await fetch('/api/manual-spin', { 
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: currentUserId })
+            });
+            const result = await response.json();
+            alert(result.success ? `Spin result: ${result.result}` : 'Spin failed: ' + result.error);
+            refreshAll();
+        }
+        
+        // Load users list on startup
+        loadUsersList();
+        
+        // Auto-refresh every 10 seconds
+        setInterval(refreshAll, 10000);
+        
+        // Initial load
+        refreshAll();
+    </script>
+</body>
+</html>
