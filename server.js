@@ -32,8 +32,7 @@ try {
 
 // Load refresh tokens from environment variables
 function getRefreshToken(userId) {
-    return process.env[`REFRESH_TOKEN_${userId.toUpperCase()}`] || 
-           process.env.DEFAULT_REFRESH_TOKEN;
+    return process.env[`REFRESH_TOKEN_${userId.toUpperCase()}`];
 }
 
 // Global state with persistence
@@ -118,8 +117,8 @@ function loadState() {
     }
 }
 
-// Auto-save state every 5 minutes
-setInterval(saveState, 5 * 60 * 1000);
+// Auto-save state every 45 minutes
+setInterval(saveState, 45 * 60 * 1000);
 
 // Utility functions
 function logActivity(userId, message, type = 'info') {
@@ -339,7 +338,7 @@ async function checkAndClaimAchievements(userId) {
     
     try {
         // Step 1: Get achievements data
-        const achievementsUrl = `${CONFIG.API_BASE_URL}/v1/achievements/${user.config.userClaimAchivId}/user`;
+        const achievementsUrl = `${CONFIG.API_BASE_URL}/v1/achievements/${user.config.userId}/user`;
         const achievementsResult = await sendAPIRequest(userId, achievementsUrl, 'GET', headers);
         
         if (!achievementsResult.success) {
@@ -551,7 +550,7 @@ function startDailyScheduleForUser(userId) {
     
     // Schedule achievements checks (3 times per day)
     const achievementTimes = [
-        `${parseInt(user.config.dayStart.split(':')[1])} ${parseInt(user.config.dayStart.split(':')[0]) - 1} * * *`, // 1 hour before start
+        `${parseInt(user.config.dayStart.split(':')[1])} ${parseInt(user.config.dayStart.split(':')[0])} * * *`, // 0 hour before start
         `${parseInt(user.config.dayStart.split(':')[1])} ${parseInt(user.config.dayStart.split(':')[0]) + 5} * * *`, // +5 hours after start
         `${parseInt(user.config.dayEnd.split(':')[1])} ${parseInt(user.config.dayEnd.split(':')[0])} * * *` // at end time
     ];
