@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Configuration
 const CONFIG = {
-    API_BASE_URL: process.env.API_BASE_URL || 'URL_BEGIN_DOMAIN',
+    API_BASE_URL: process.env.API_BASE_URL,
     PROXY_URL: process.env.PROXY_URL || 'http://localhost:5000/proxy',
     DEBUG_MODE: process.env.DEBUG_MODE === 'true' || true
 };
