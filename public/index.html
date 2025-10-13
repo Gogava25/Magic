@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MegaTool Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .user-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .user-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .logs-container {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            background: #f8f9fa;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 2px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .log-time {
+            color: #666;
+            font-size: 0.8em;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        .status-active { background-color: #28a745; }
+        .status-inactive { background-color: #dc3545; }
+        .status-pending { background-color: #ffc107; }
+        
+        .debug-panel {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .debug-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .debug-logs {
+            max-height: 400px;
+            overflow-y: auto;
+            background: #1a252f;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+        }
+        .debug-entry {
+            margin-bottom: 8px;
+            padding: 5px;
+            border-left: 3px solid #3498db;
+        }
+        .debug-timestamp {
+            color: #95a5a6;
+            font-size: 0.7em;
+        }
+        .debug-user {
+            color: #f39c12;
+            font-weight: bold;
+        }
+        .debug-action {
+            color: #3498db;
+        }
+        .tab-buttons {
+            margin-bottom: 10px;
+        }
+        .tab-button {
+            padding: 8px 16px;
+            margin-right: 5px;
+            background: #34495e;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .tab-button.active {
+            background: #3498db;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MegaTool Dashboard</h1>
+        
+        <div class="tab-buttons">
+            <button class="tab-button active" onclick="showTab('dashboard')">Dashboard</button>
+            <button class="tab-button" onclick="showTab('debug')">Debug Logs</button>
+        </div>
+        
+        <div id="dashboard-tab" class="tab-content active">
+            <div id="users-container"></div>
+        </div>
+        
+        <div id="debug-tab" class="tab-content">
+            <div class="debug-panel">
+                <div class="debug-header">
+                    <h3>API Debug Logs</h3>
+                    <button onclick="refreshDebugLogs()">Refresh</button>
+                </div>
+                <div class="debug-logs" id="debug-logs">
+                    Loading debug logs...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'dashboard';
+
+        function showTab(tabName) {
+            currentTab = tabName;
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tabName === 'debug') {
+                refreshDebugLogs();
+            }
+        }
+
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/api/users');
+                const users = await response.json();
+                const container = document.getElementById('users-container');
+                container.innerHTML = '';
+
+                for (const [userId, userData] of Object.entries(users)) {
+                    const userCard = createUserCard(userId, userData);
+                    container.appendChild(userCard);
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        function createUserCard(userId, userData) {
+            const card = document.createElement('div');
+            card.className = 'user-card';
+            const isActive = isWithinActiveWindow(userData) && userData.isActive;
+            const statusClass = isActive ? 'status-active' : 'status-inactive';
+
+            card.innerHTML = `
+                <div class="user-header">
+                    <h2>User: ${userId}</h2>
+                    <div>
+                        <span class="status-indicator ${statusClass}"></span>
+                        <span>${isActive ? 'Active' : 'Inactive'}</span>
+                    </div>
+                </div>
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Spins Today</div>
+                        <div class="stat-value">${userData.spinCount || 0}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Achievements Claimed</div>
+                        <div class="stat-value">${userData.achievementsClaimed || 0}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Current Funds</div>
+                        <div class="stat-value">${(userData.lastFunds || 0).toLocaleString()}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Last Refresh</div>
+                        <div>${userData.lastRefresh ? new Date(userData.lastRefresh).toLocaleString() : 'Never'}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Next Spin</div>
+                        <div>${userData.nextSpinTime ? new Date(userData.nextSpinTime).toLocaleString() : 'Not scheduled'}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Status</div>
+                        <div>${userData.isActive ? '🟢 Active' : '🔴 Inactive'}</div>
+                    </div>
+                </div>
+                <h4>Recent Activity</h4>
+                <div class="logs-container" id="logs-${userId}">
+                    Loading...
+                </div>
+                <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button onclick="refreshToken('${userId}')">Refresh Token</button>
+                    <button onclick="executeSpin('${userId}')">Spin Now</button>
+                    <button onclick="claimAchievements('${userId}')">Claim Achievements</button>
+                    <button onclick="checkFunds('${userId}')">Check Funds</button>
+                    <button onclick="refreshUserLogs('${userId}')">Refresh Logs</button>
+                </div>
+            `;
+
+            refreshUserLogs(userId);
+            return card;
+        }
+
+        async function refreshUserLogs(userId) {
+            try {
+                const response = await fetch(`/api/user/${userId}/activity?limit=20`);
+                const logs = await response.json();
+                const logsContainer = document.getElementById(`logs-${userId}`);
+                logsContainer.innerHTML = '';
+
+                logs.forEach(log => {
+                    const logEntry = document.createElement('div');
+                    logEntry.className = 'log-entry';
+                    logEntry.innerHTML = `
+                        <span class="log-time">${new Date(log.timestamp).toLocaleTimeString()}</span>
+                        ${log.message}
+                    `;
+                    logsContainer.appendChild(logEntry);
+                });
+            } catch (error) {
+                console.error('Error loading logs:', error);
+            }
+        }
+
+        async function refreshDebugLogs() {
+            try {
+                const response = await fetch('/api/debug-logs?limit=50');
+                const debugLogs = await response.json();
+                const debugContainer = document.getElementById('debug-logs');
+                debugContainer.innerHTML = '';
+
+                debugLogs.forEach(log => {
+                    const debugEntry = document.createElement('div');
+                    debugEntry.className = 'debug-entry';
+                    
+                    let content = `
+                        <div class="debug-timestamp">${new Date(log.timestamp).toLocaleString()}</div>
+                        <div><span class="debug-user">${log.userId}</span> - <span class="debug-action">${log.action}</span></div>
+                        <div><strong>URL:</strong> ${log.request.method} ${log.request.url}</div>
+                    `;
+                    
+                    if (log.request.body) {
+                        content += `<div><strong>Request Body:</strong><br><pre style="margin: 5px 0; background: #34495e; padding: 5px; border-radius: 3px;">${log.request.body}</pre></div>`;
+                    }
+                    
+                    if (log.response) {
+                        content += `<div style="color: #2ecc71;"><strong>Response (${log.response.status}):</strong><br><pre style="margin: 5px 0; background: #34495e; padding: 5px; border-radius: 3px;">${log.response.data}</pre></div>`;
+                    }
+                    
+                    if (log.error) {
+                        content += `<div style="color: #e74c3c;"><strong>Error:</strong> ${log.error.message}</div>`;
+                        if (log.error.data) {
+                            content += `<div style="color: #e74c3c;"><strong>Error Details:</strong><br><pre style="margin: 5px 0; background: #34495e; padding: 5px; border-radius: 3px;">${log.error.data}</pre></div>`;
+                        }
+                    }
+                    
+                    debugEntry.innerHTML = content;
+                    debugContainer.appendChild(debugEntry);
+                });
+            } catch (error) {
+                console.error('Error loading debug logs:', error);
+            }
+        }
+
+async function refreshToken(userId) {
+    try {
+        const response = await fetch(`/api/user/${userId}/refresh`, { method: 'POST' });
+        const result = await response.json();
+        console.log(`Token refresh for ${userId}: ${result.message}`);
+        loadDashboard();
+    } catch (error) {
+        console.error('Error refreshing token:', error);
+    }
+}
+
+async function executeSpin(userId) {
+    try {
+        const response = await fetch(`/api/user/${userId}/spin`, { method: 'POST' });
+        const result = await response.json();
+        console.log(`Spin for ${userId}: ${result.success ? 'Success - ' + result.result : 'Failed'}`);
+        loadDashboard();
+    } catch (error) {
+        console.error('Error executing spin:', error);
+    }
+}
+
+async function claimAchievements(userId) {
+    try {
+        const response = await fetch(`/api/user/${userId}/claim-achievements`, { method: 'POST' });
+        const result = await response.json();
+        console.log(`Achievements for ${userId}: ${result.success ? 'Claimed ' + result.claimed : 'Failed'}`);
+        loadDashboard();
+    } catch (error) {
+        console.error('Error claiming achievements:', error);
+    }
+}
+
+async function checkFunds(userId) {
+    try {
+        const response = await fetch(`/api/user/${userId}/check-funds`, { method: 'POST' });
+        const result = await response.json();
+        console.log(`Funds for ${userId}: ${result.success ? result.funds.toLocaleString() + ' silver' : 'Failed'}`);
+        loadDashboard();
+    } catch (error) {
+        console.error('Error checking funds:', error);
+    }
+}
+
+        function isWithinActiveWindow(userData) {
+            const now = new Date();
+            const currentUTC = now.getUTCHours() * 60 + now.getUTCMinutes();
+            const startTime = userData.dayStart.split(':').map(Number);
+            const endTime = userData.dayEnd.split(':').map(Number);
+            const dayStart = startTime[0] * 60 + startTime[1];
+            const dayEnd = endTime[0] * 60 + endTime[1];
+            return currentUTC >= dayStart && currentUTC <= dayEnd;
+        }
+
+        // Refresh dashboard every 30 seconds
+        loadDashboard();
+        setInterval(loadDashboard, 30000);
+        
+        // Auto-refresh debug logs when on debug tab
+        setInterval(() => {
+            if (currentTab === 'debug') {
+                refreshDebugLogs();
+            }
+        }, 5000);
+    </script>
+</body>
+</html>
