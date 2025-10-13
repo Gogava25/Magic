@@ -1,0 +1,13 @@
+{
+  "users": [
+    {
+      "userId": "359793",
+      "dayStart": "08:00",
+      "dayEnd": "20:00",
+      "baseInterval": 32,
+      "randomScale1": 180,
+      "randomScale2": 2000,
+      "userClaimAchivId": "359793"
+    }
+  ]
+}
