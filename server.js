@@ -79,7 +79,7 @@ USERS_CONFIG.forEach(userConfig => {
 });
 
 // State persistence
-const STATE_FILE = 'bot-state.json';
+const STATE_FILE = 'tool-state.json';
 
 function saveState() {
     try {
@@ -754,9 +754,9 @@ app.get('/api/users', (req, res) => {
     res.json(Object.keys(globalState.users));
 });
 
-// Initialize and start the bot for all users
-async function initializeBot() {
-    logActivity('SYSTEM', 'Initializing MegaTool Bot...');
+// Initialize and start the tool for all users
+async function initializeTool() {
+    logActivity('SYSTEM', 'Initializing MegaTool...');
     loadState();
     
     // Initialize each user
@@ -783,24 +783,24 @@ async function initializeBot() {
         }
     }
     
-    logActivity('SYSTEM', `MegaTool Bot initialized for ${Object.keys(globalState.users).length} users`);
+    logActivity('SYSTEM', `MegaTool initialized for ${Object.keys(globalState.users).length} users`);
 }
 
 // Start server
 app.listen(PORT, () => {
-    console.log(`MegaTool Bot running on port ${PORT}`);
-    initializeBot();
+    console.log(`MegaTool running on port ${PORT}`);
+    initializeTool();
 });
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-    logActivity('SYSTEM', 'Shutting down MegaTool Bot...');
+    logActivity('SYSTEM', 'Shutting down MegaTool...');
     saveState();
     process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-    logActivity('SYSTEM', 'Shutting down MegaTool Bot...');
+    logActivity('SYSTEM', 'Shutting down MegaTool...');
     saveState();
     process.exit(0);
 });
