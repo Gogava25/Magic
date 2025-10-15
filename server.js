@@ -592,6 +592,60 @@ function parseHHMM(hhmm) {
   return { h, m };
 }
 
+// --- Serialization and timer helpers (avoid circular JSON) ---
+
+function toISOStringOrNull(val) {
+  if (!val) return null;
+  try {
+    const d = new Date(val);
+    return isNaN(d) ? null : d.toISOString();
+  } catch {
+    return null;
+  }
+}
+
+// Returns a safe, serializable snapshot of userData (no timers).
+function safeUsersSnapshot() {
+  const out = {};
+  for (const [id, u] of Object.entries(userData)) {
+    // Strip timer handles and other circulars
+    const { _achTimers, _dailyRolloverTimer, ...rest } = u;
+    // Convert Dates to ISO so the UI can render them consistently
+    const startISO = toISOStringOrNull(u._effectiveStartUTC);
+    const endISO   = toISOStringOrNull(u._effectiveEndUTC);
+
+    out[id] = {
+      ...rest,
+      _effectiveStartUTC: startISO,
+      _effectiveEndUTC: endISO,
+    };
+  }
+  return out;
+}
+
+// Ensure timer fields exist and are non-enumerable to avoid JSON.stringify picking them up
+function ensureTimerHolders(user) {
+  const d1 = Object.getOwnPropertyDescriptor(user, '_achTimers');
+  if (!d1 || d1.enumerable) {
+    // clear existing enumerable array if any
+    Object.defineProperty(user, '_achTimers', {
+      value: [],
+      writable: true,
+      configurable: true,
+      enumerable: false,
+    });
+  }
+  const d2 = Object.getOwnPropertyDescriptor(user, '_dailyRolloverTimer');
+  if (!d2 || d2.enumerable) {
+    Object.defineProperty(user, '_dailyRolloverTimer', {
+      value: null,
+      writable: true,
+      configurable: true,
+      enumerable: false,
+    });
+  }
+}
+
 // Compute today's effective Start & End with ±20m jitter on Start
 function computeEffectiveWindow(user, now = new Date()) {
   const { h: startH, m: startM } = parseHHMM(user.dayStart);
@@ -622,18 +676,34 @@ function computeEffectiveWindow(user, now = new Date()) {
 function clearAchievementTimers(userId) {
   const user = userData[userId];
   if (!user) return;
+
+  ensureTimerHolders(user);
+
   if (Array.isArray(user._achTimers)) {
     user._achTimers.forEach(t => clearTimeout(t));
   }
-  user._achTimers = [];
+  // Re-create as non-enumerable empty array
+  Object.defineProperty(user, '_achTimers', {
+    value: [],
+    writable: true,
+    configurable: true,
+    enumerable: false,
+  });
+
   if (user._dailyRolloverTimer) clearTimeout(user._dailyRolloverTimer);
-  user._dailyRolloverTimer = null;
+  Object.defineProperty(user, '_dailyRolloverTimer', {
+    value: null,
+    writable: true,
+    configurable: true,
+    enumerable: false,
+  });
 }
 
 // Schedules one day's plan for a user (achievements + rollover)
 function scheduleDailyPlan(userId) {
   const user = userData[userId];
   if (!user) return;
+  ensureTimerHolders(user);
 
   clearAchievementTimers(userId);
 
@@ -747,7 +817,7 @@ function startScheduledTasks() {
 
 // API Routes for frontend
 app.get('/api/users', (req, res) => {
-    res.json(userData);
+  res.json(safeUsersSnapshot());
 });
 
 app.get('/api/activity', (req, res) => {
