@@ -249,25 +249,31 @@ async function refreshToken(userId) {
 
 // Schedule next token refresh at user's dayStart time
 function scheduleNextTokenRefresh(userId) {
-    const user = userData[userId];
-    if (!user) return;
+  const user = userData[userId];
+  if (!user) return;
 
-    const now = new Date();
-    const [startHour, startMinute] = user.dayStart.split(':').map(Number);
-    
-    // Calculate next refresh time (tomorrow at dayStart)
-    const nextRefresh = new Date();
-    nextRefresh.setDate(nextRefresh.getDate() + 1);
-    nextRefresh.setHours(startHour, startMinute, 0, 0);
-    
-    const delay = nextRefresh.getTime() - now.getTime();
-    
-    setTimeout(() => {
-        logActivity(userId, '🔄 Scheduled daily token refresh');
-        refreshToken(userId);
-    }, delay);
-    
-    logActivity(userId, `⏰ Next token refresh scheduled for: ${nextRefresh.toUTCString()}`);
+  // Compute tomorrow's randomized StartDay in UTC
+  const { h: startH, m: startM } = parseHHMM(user.dayStart);
+  let base = utcTodayAt(startH, startM, 0, 0);
+  base = addMs(base, 24 * 60 * 60 * 1000); // tomorrow
+
+  const jitterRangeMs = minutesToMs(20);
+  const randMs = Math.floor(Math.random() * (2 * jitterRangeMs + 1)) - jitterRangeMs;
+  const nextRefresh = addMs(base, randMs);
+
+  const delay = Math.max(nextRefresh.getTime() - Date.now(), 1000);
+
+  setTimeout(async () => {
+    logActivity(
+      userId,
+      `🔄 Daily token refresh firing at randomized StartDay (${Math.round(randMs / 60000)}m jitter)`
+    );
+    await refreshToken(userId);
+    // NOTE: refreshToken() will call scheduleNextTokenRefresh() again,
+    // which will compute a NEW randomized time for the following day.
+  }, delay);
+
+  logActivity(userId, `⏰ Next token refresh scheduled for: ${nextRefresh.toUTCString()} (jitter ${Math.round(randMs/60000)}m)`);
 }
 
 // BLOCK 2: Check Funds and Claim Achievements
@@ -354,7 +360,7 @@ async function claimAchievements(userId) {
             return 0;
         }
 
-        logActivity(userId, `🎯 Found ${validIDs.length} achievements to claim`);
+        //logActivity(userId, `🎯 Found ${validIDs.length} achievements to claim`);
 
         // Claim achievements in batches
         const batchSize = 3;
@@ -367,7 +373,7 @@ async function claimAchievements(userId) {
                 
                 if (claimResult.success) {
                     totalClaimed++;
-                    logActivity(userId, `✅ Claimed achievement ID: ${achievementId}`);
+                    //logActivity(userId, `✅ Claimed achievement ID: ${achievementId}`);
                 } else {
                     logActivity(userId, `❌ Failed to claim achievement ${achievementId}: ${claimResult.error}`);
                 }
@@ -436,13 +442,13 @@ async function executeSpin(userId) {
 
             // Prize mapping
             const prizeMap = {
-                11755: '5,000 Silvercoins',
-                11750: 'Core Standard Pack',
-                11749: '500 Silvercoins',
-                11754: '1,000,000 Silvercoins',
-                11753: '100,000 Silvercoins',
-                11752: '2,500 Silvercoins',
-                11751: '1,000 Silvercoins',
+                11755: '5,000 Spraycoins',
+                11750: 'Standard Box 2025',
+                11749: '500 Spraycoins',
+                11754: '1,000,000 Spraycoins',
+                11753: '100,000 Spraycoins',
+                11752: '2,500 Spraycoins',
+                11751: '1,000 Spraycoins',
             };
 
             prizeName = prizeMap[resultId] || `ID = ${resultId}`;
@@ -492,15 +498,26 @@ function calculateNextSpinTime(userId) {
 
 // Check if current time is within user's active window
 function isWithinActiveWindow(userId) {
-    const user = userData[userId];
-    if (!user) return false;
+  const user = userData[userId];
+  if (!user) return false;
 
-    const now = new Date();
-    const currentUTC = now.getUTCHours() * 60 + now.getUTCMinutes();
-    const dayStart = timeToMinutes(user.dayStart);
-    const dayEnd = timeToMinutes(user.dayEnd);
+  const now = new Date();
 
-    return currentUTC >= dayStart && currentUTC <= dayEnd;
+  // If we haven't computed today's effective window yet, compute and store it
+  if (!user._effectiveStartUTC || !user._effectiveEndUTC) {
+    const { effectiveStart, effectiveEnd, randMs } = computeEffectiveWindow(user, now);
+    user._effectiveStartUTC = effectiveStart;
+    user._effectiveEndUTC   = effectiveEnd;
+    user._startJitterMin    = Math.round(randMs / 60000);
+    logActivity(
+      userId,
+      `ℹ️ Effective window initialized in isWithinActiveWindow: ` +
+      `start=${effectiveStart.toUTCString()}, end=${effectiveEnd.toUTCString()}`
+    );
+  }
+
+  // Between start and end? (These are absolute Date ranges; handles midnight correctly)
+  return now >= user._effectiveStartUTC && now <= user._effectiveEndUTC;
 }
 
 function timeToMinutes(timeStr) {
@@ -540,6 +557,149 @@ function logActivity(userId, message) {
     console.log(`[${timestamp}] User ${userId}: ${message}`);
 }
 
+// ───────────────────────────────────────────────────────────────────────────────
+// Daily Plan (UTC + randomized StartDay ±20m)
+//
+// For each user, every day we compute an "effective" window:
+//   effectiveStart = StartDay (from users.json) ± 20 minutes (random, in ms)
+//   effectiveEnd   = EndDay (fixed, same as users.json)
+//
+// We then schedule Achievements:
+//   #1  effectiveStart + 5 minutes
+//   #2  #1 + 5 hours
+//   #3  effectiveEnd - 5 minutes
+//
+// After #3, we schedule the next day's plan (new randomization).
+// Also exposes effective window so isWithinActiveWindow() uses it (spins + funds).
+// ───────────────────────────────────────────────────────────────────────────────
+
+function utcTodayAt(hour, minute, second = 0, ms = 0) {
+  const d = new Date();
+  d.setUTCHours(hour, minute, second, ms);
+  return d;
+}
+
+function addMs(date, ms) {
+  return new Date(date.getTime() + ms);
+}
+
+function minutesToMs(min) {
+  return min * 60 * 1000;
+}
+
+function parseHHMM(hhmm) {
+  const [h, m] = hhmm.split(':').map(Number);
+  return { h, m };
+}
+
+// Compute today's effective Start & End with ±20m jitter on Start
+function computeEffectiveWindow(user, now = new Date()) {
+  const { h: startH, m: startM } = parseHHMM(user.dayStart);
+  const { h: endH, m: endM } = parseHHMM(user.dayEnd);
+
+  let baseStart = utcTodayAt(startH, startM, 0, 0);
+  let baseEnd   = utcTodayAt(endH, endM, 0, 0);
+
+  // If End <= Start, window spans midnight → push End to next UTC day
+  if (baseEnd <= baseStart) baseEnd = addMs(baseEnd, 24 * 60 * 60 * 1000);
+
+  // If the whole window already ended, move both to "tomorrow"
+  if (now > baseEnd) {
+    baseStart = addMs(baseStart, 24 * 60 * 60 * 1000);
+    baseEnd   = addMs(baseEnd,   24 * 60 * 60 * 1000);
+  }
+
+  // Jitter: random in [-20m, +20m] in milliseconds
+  const jitterRangeMs = minutesToMs(20);
+  const randMs = Math.floor(Math.random() * (2 * jitterRangeMs + 1)) - jitterRangeMs;
+  const effectiveStart = addMs(baseStart, randMs);
+  const effectiveEnd   = baseEnd; // End is not jittered
+
+  return { effectiveStart, effectiveEnd, randMs };
+}
+
+// Clear previously scheduled timers (avoid duplicates)
+function clearAchievementTimers(userId) {
+  const user = userData[userId];
+  if (!user) return;
+  if (Array.isArray(user._achTimers)) {
+    user._achTimers.forEach(t => clearTimeout(t));
+  }
+  user._achTimers = [];
+  if (user._dailyRolloverTimer) clearTimeout(user._dailyRolloverTimer);
+  user._dailyRolloverTimer = null;
+}
+
+// Schedules one day's plan for a user (achievements + rollover)
+function scheduleDailyPlan(userId) {
+  const user = userData[userId];
+  if (!user) return;
+
+  clearAchievementTimers(userId);
+
+  const now = new Date();
+  const { effectiveStart, effectiveEnd, randMs } = computeEffectiveWindow(user, now);
+
+  // Persist effective window for this user (used by isWithinActiveWindow + UI/debug)
+  user._effectiveStartUTC = effectiveStart;
+  user._effectiveEndUTC   = effectiveEnd;
+  user._startJitterMin    = Math.round(randMs / 60000);
+
+  logActivity(
+    userId,
+    `📅 Daily plan set (UTC): start=${effectiveStart.toUTCString()} ` +
+    `(jitter ${user._startJitterMin}m), end=${effectiveEnd.toUTCString()}`
+  );
+
+  // Achievements times:
+  const claim1 = addMs(effectiveStart, minutesToMs(5));     // Start(±20m) + 5m
+  const claim2 = addMs(claim1,       minutesToMs(6 * 60));  // +6h from claim1
+  const claim3 = addMs(effectiveEnd, -minutesToMs(5));      // End - 5m
+
+  // Helper: schedule a single claim if still in the future
+  const scheduleClaim = (when, label) => {
+    const delay = when.getTime() - Date.now();
+    if (delay <= 0) {
+      logActivity(userId, `⏭️ ${label} skipped (time passed)`);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      try {
+        if (!user.isActive) {
+          logActivity(userId, `⏸️ ${label} skipped (user inactive)`);
+        } else {
+          logActivity(userId, `🏁 ${label} firing`);
+          await claimAchievements(userId);
+        }
+      } catch (e) {
+        logActivity(userId, `⚠️ ${label} error: ${e.message}`);
+      }
+    }, delay);
+    user._achTimers.push(timer);
+    logActivity(userId, `⏰ ${label} scheduled for ${when.toUTCString()} (in ${Math.round(delay/60000)}m)`);
+  };
+
+  scheduleClaim(claim1, 'Achievements #1 (Start+5m)');
+  scheduleClaim(claim2, 'Achievements #2 (+5h)');
+  scheduleClaim(claim3, 'Achievements #3 (End-5m)');
+
+  // Rollover: after end-of-day (add a small buffer), compute the next day plan
+  const rolloverAt = addMs(effectiveEnd, minutesToMs(2));
+  const rolloverDelay = Math.max(rolloverAt.getTime() - Date.now(), 1000);
+  user._dailyRolloverTimer = setTimeout(() => {
+    logActivity(userId, '🔁 Rollover: computing next day plan (new randomized StartDay)');
+    scheduleDailyPlan(userId);
+  }, rolloverDelay);
+}
+
+// Apply the daily plan to all users (run at server start)
+function scheduleDailyPlanForAllUsers() {
+  logActivity('system', '🗓️ Scheduling daily plans for all users (UTC + randomized StartDay)');
+  Object.keys(userData).forEach((userId) => {
+    scheduleDailyPlan(userId);
+  });
+}
+
 // Continuous operations for each user
 function startContinuousOperations() {
     console.log('🚀 Starting continuous operations for all users...');
@@ -568,71 +728,21 @@ function startContinuousOperations() {
                 await checkFunds(userId);
             }
         }
-    }, 60 * 60 * 1000);
+    }, 120 * 60 * 1000);
 }
 
 // Schedule achievements based on server start time
-function scheduleAchievementsFromStart() {
-    console.log('⏰ Scheduling achievements based on server start time...');
-    
-    Object.keys(userData).forEach((userId) => {
-        const user = userData[userId];
-        if (user.isActive) {
-            // Achievement 1: Immediately (already done in startImmediateOperations)
-            // Achievement 2: +5.5 hours from now
-            setTimeout(() => {
-                if (isWithinActiveWindow(userId) && user.isActive) {
-                    logActivity(userId, '🔄 Second scheduled achievements check (+5.5 hours)');
-                    claimAchievements(userId);
-                }
-            }, 5.5 * 60 * 60 * 1000);
-            
-            // Achievement 3: At end of day
-            scheduleEndOfDayAchievements(userId);
-        }
-    });
-}
+
 
 // Schedule end-of-day achievements
-function scheduleEndOfDayAchievements(userId) {
-    const user = userData[userId];
-    if (!user) return;
 
-    const now = new Date();
-    const [endHour, endMinute] = user.dayEnd.split(':').map(Number);
-    
-    // Calculate end of day time
-    const endOfDay = new Date();
-    endOfDay.setHours(endHour, endMinute, 0, 0);
-    
-    // If end of day is in the past, schedule for tomorrow
-    if (endOfDay <= now) {
-        endOfDay.setDate(endOfDay.getDate() + 1);
-    }
-    
-    const delay = endOfDay.getTime() - now.getTime();
-    
-    setTimeout(() => {
-        if (user.isActive) {
-            logActivity(userId, '🔄 Third scheduled achievements check (end of day)');
-            claimAchievements(userId);
-            
-            // Schedule next day's end-of-day achievements
-            scheduleEndOfDayAchievements(userId);
-        }
-    }, delay);
-    
-    logActivity(userId, `⏰ End-of-day achievements scheduled for: ${endOfDay.toUTCString()}`);
-}
 
 // Scheduled Tasks
 function startScheduledTasks() {
-    console.log('⏰ Starting scheduled tasks...');
-
-    // Schedule achievements based on server start time
-    scheduleAchievementsFromStart();
-
-    console.log('✅ Scheduled tasks started');
+  console.log('⏰ Starting scheduled tasks...');
+  // Schedule a daily plan (achievements + effective window) for each user
+  scheduleDailyPlanForAllUsers();
+  console.log('✅ Scheduled tasks started');
 }
 
 // API Routes for frontend
