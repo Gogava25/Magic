@@ -188,7 +188,7 @@ async function executeSpin(userId) {
         return null;
     }
 
-    const spinData = result.data;
+    const spinData = result.data.data;
     const resultId = spinData.id;
     user.spinCount++;
 
