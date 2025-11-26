@@ -1,1 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Spin Bot Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --muted: #64748b;
+      --text: #1e293b;
+      --accent: #0891b2;
+      --good: #16a34a;
+      --warn: #d97706;
+      --bad: #dc2626;
+      --chip: #f1f5f9;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      padding: 20px 16px;
+      border-bottom: 1px solid #e2e8f0;
+      background: rgba(255, 255, 255, 0.9);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    h1 { margin: 0; font-size: 20px; }
+    .accent { color: var(--accent); }
+    .wrap { padding: 16px; max-width: 1200px; margin: 0 auto; }
+    .card { 
+      background: white;
+      border: 1px solid #e2e8f0; 
+      border-radius: 12px; 
+      overflow: hidden; 
+      margin-bottom: 16px;
+    }
+    .card h2 { 
+      font-size: 16px; 
+      margin: 0; 
+      padding: 12px 14px; 
+      border-bottom: 1px solid #e2e8f0; 
+      background: rgba(241, 245, 249, 0.7);
+    }
+    .section { padding: 12px 14px; }
+    .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .btn {
+      background: #f1f5f9; 
+      border: 1px solid #cbd5e1; 
+      color: var(--text);
+      padding: 8px 12px; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      transition: all .15s;
+    }
+    .btn:hover { 
+      border-color: var(--accent); 
+      color: var(--accent); 
+    }
+    .btn.small { padding: 6px 10px; font-size: 12px; }
+    .btn.start { background: #dcfce7; border-color: #16a34a; color: #16a34a; }
+    .btn.stop { background: #fee2e2; border-color: #dc2626; color: #dc2626; }
+    .user-card {
+      background: rgba(248, 250, 252, 0.8); 
+      border: 1px solid #e2e8f0; 
+      border-radius: 10px; 
+      padding: 12px; 
+      margin-bottom: 10px;
+    }
+    .user-head { display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+    .user-head h3 { margin: 0; font-size: 15px; }
+    .kv { display: grid; grid-template-columns: 140px 1fr; gap: 8px 12px; margin: 8px 0; font-size: 13px; }
+    .muted { color: var(--muted); }
+    .ok { color: var(--good); }
+    .bad { color: var(--bad); }
+    .warn { color: var(--warn); }
+    pre.logs {
+      font-family: ui-monospace, monospace;
+      white-space: pre-wrap; 
+      background: #f1f5f9; 
+      border: 1px solid #cbd5e1;
+      padding: 10px; 
+      border-radius: 10px; 
+      max-height: 400px; 
+      overflow: auto; 
+      font-size: 12px;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin: 10px 0;
+    }
+    .stat-card {
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--accent);
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Spin Bot <span class="accent">Dashboard</span></h1>
+    <div class="row">
+      <button class="btn small" id="refreshAll">Refresh All</button>
+    </div>
+  </header>
 
+  <div class="wrap">
+    <div class="card">
+      <h2>Users & Statistics</h2>
+      <div class="section" id="usersPanel">Loading users…</div>
+    </div>
+
+    <div class="card">
+      <h2>Activity Logs</h2>
+      <div class="section">
+        <div class="row" style="margin-bottom:8px;">
+          <button class="btn small" id="refreshLogs">Refresh Logs</button>
+          <span class="muted small">Showing latest 50 entries</span>
+        </div>
+        <pre class="logs" id="logsBox">Loading logs…</pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // API functions
+    async function fetchUsers() {
+      const r = await fetch('/api/users');
+      if (!r.ok) throw new Error('Failed to fetch users');
+      return r.json();
+    }
+
+    async function fetchDebugLogs(limit = 50) {
+      const r = await fetch(`/api/debug-logs?limit=${limit}`);
+      if (!r.ok) throw new Error('Failed to fetch logs');
+      return r.json();
+    }
+
+    async function userAction(userId, action) {
+      const r = await fetch(`/api/user/${encodeURIComponent(userId)}/${action}`, { 
+        method: 'POST' 
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j?.message || `Action ${action} failed`);
+      return j;
+    }
+
+    // Render users
+    function renderUsers(users) {
+      const panel = document.getElementById('usersPanel');
+      const ids = Object.keys(users);
+      
+      if (!ids.length) {
+        panel.innerHTML = '<div class="muted">No users loaded.</div>';
+        return;
+      }
+
+      // Calculate totals
+      const totals = {
+        active: ids.filter(id => users[id].isActive).length,
+        total: ids.length,
+        spins: ids.reduce((sum, id) => sum + (users[id].spinCount || 0), 0),
+        packs: ids.reduce((sum, id) => sum + (users[id].packsOpened || 0), 0)
+      };
+
+      const parts = [`
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-value">${totals.active}/${totals.total}</div>
+            <div class="stat-label">Active Users</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${totals.spins}</div>
+            <div class="stat-label">Total Spins</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${totals.packs}</div>
+            <div class="stat-label">Packs Opened</div>
+          </div>
+        </div>
+      `];
+
+      ids.forEach((id) => {
+        const u = users[id];
+        parts.push(`
+          <div class="user-card">
+            <div class="user-head">
+              <h3>${id}</h3>
+              <div class="row">
+                <button class="btn small" data-act="refresh" data-id="${id}">Refresh Token</button>
+                <button class="btn small start" data-act="start" data-id="${id}">Start</button>
+                <button class="btn small stop" data-act="stop" data-id="${id}">Stop</button>
+              </div>
+            </div>
+            <div class="kv">
+              <div class="muted">Status</div>
+              <div>${u.isActive ? '<span class="ok">Active</span>' : '<span class="bad">Inactive</span>'}</div>
+              <div class="muted">Spins</div>
+              <div>${u.spinCount || 0}</div>
+              <div class="muted">Packs Opened</div>
+              <div>${u.packsOpened || 0}</div>
+              ${u.lastError ? `
+                <div class="muted">Last Error</div>
+                <div class="bad">${u.lastError}</div>
+              ` : ''}
+            </div>
+          </div>
+        `);
+      });
+
+      panel.innerHTML = parts.join('\n');
+      
+      // Add event listeners
+      panel.querySelectorAll('button[data-act]').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const id = e.currentTarget.getAttribute('data-id');
+          const act = e.currentTarget.getAttribute('data-act');
+          e.currentTarget.disabled = true;
+          try {
+            await userAction(id, act);
+            await loadUsers();
+            await loadLogs();
+          } catch (err) {
+            alert(err.message || String(err));
+          } finally {
+            e.currentTarget.disabled = false;
+          }
+        });
+      });
+    }
+
+    // Render logs
+    function renderLogs(list) {
+      const box = document.getElementById('logsBox');
+      if (!Array.isArray(list) || !list.length) {
+        box.textContent = 'No logs yet.';
+        return;
+      }
+      const lines = list.map(entry => {
+        const ts = entry.timestamp?.substring(11, 19) || '';
+        const who = entry.userId || 'system';
+        const msg = entry.message || entry.action || '';
+        return `[${ts}] [${who}] ${msg}`;
+      });
+      box.textContent = lines.join('\n');
+    }
+
+    // Load functions
+    async function loadUsers() {
+      try {
+        const data = await fetchUsers();
+        renderUsers(data);
+      } catch (e) {
+        document.getElementById('usersPanel').innerHTML = `<span class="bad">Failed to load users: ${e.message}</span>`;
+      }
+    }
+
+    async function loadLogs() {
+      try {
+        const logs = await fetchDebugLogs(50);
+        renderLogs(logs);
+      } catch (e) {
+        document.getElementById('logsBox').textContent = `Failed to load logs: ${e.message}`;
+      }
+    }
+
+    // Event listeners
+    document.getElementById('refreshAll').addEventListener('click', () => {
+      loadUsers();
+      loadLogs();
+    });
+    document.getElementById('refreshLogs').addEventListener('click', loadLogs);
+
+    // Initial load
+    loadUsers();
+    loadLogs();
+  </script>
+</body>
+</html>
