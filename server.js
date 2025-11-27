@@ -221,7 +221,7 @@ async function startSpinLoop(userId) {
             }
 
             // Wait 7 seconds
-            await new Promise(resolve => setTimeout(resolve, 7000));
+            await new Promise(resolve => setTimeout(resolve, 5000));
 
             // Execute spin
             const spinResult = await executeSpin(userId);
@@ -231,7 +231,7 @@ async function startSpinLoop(userId) {
             }
 
             // Wait 7 seconds before next iteration
-            await new Promise(resolve => setTimeout(resolve, 7000));
+            await new Promise(resolve => setTimeout(resolve, 5000));
 
         } catch (error) {
             if (error.response?.status === 429) {
