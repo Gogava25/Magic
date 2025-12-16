@@ -108,5 +108,95 @@
     "baseInterval": "35",
     "randomScale1": "5",
     "randomScale2": "18"
+  },
+  {
+    "userId": "900100",
+    "refreshToken": "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiQjcvYXpud0d6NGF2WUo0V1BxN0h3Zz09OmVmRWlWekxKYTVMQSs4Y1lqalZEUWg1RDJ6MUFJaE1va0Y5Zjd0N2ErK0ZRT3RZbU5ydE9rSlNkV2t5ZmRxbGwxajVHby94cnA3SkNJM1V2OEVrVDk3WE1JZ29HeURwK0dzWGZnUzRaTEo2bWhhYXAwSk51NThSd1cwV1JhblpaUG1EMXF1TXU2Q1RRS1ZYOUp1SlVWYjY4aFRUWFMzM0dtMFVHTzNRbUdCZm5JUllaRXpIT3U0cVFZWWlHQ0pSTjhpSUJwN0MyYVpVUnBpTlRsVExaRXN2T0ZpZGNXMDU4RWJVc1g3LzAvdVNBMk1nQ0VHaEhYL0NyMEpDY2dJOWYiLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3NjU3ODY3NzYsImlzcyI6ImVwaWNzLmdnIn0.GVLNGI92YLfNkldVoYfCFiL5dnWVZGci0TaiAX_wQs8kwK54vmrJypqhSLoz4X0D",
+    "userClaimAchivID": "900100",
+    "dayStart": "15:13",
+    "dayEnd": "4:23",
+    "baseInterval": "36",
+    "randomScale1": "4",
+    "randomScale2": "18"
+  },
+  {
+    "userId": "900101",
+    "refreshToken": "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiOHA4ZWN2anpXMndKV09lRjROV3hJZz09OnpjTWZpYjVMOHB1c01aenNLU3djSHdmRG5RMWdaTUFnQXVwMjJtWExlb09NUEpCcmVQZFlMQzh6UGs5Q3VvbmI4blFhbWYrdGQwNHVzTUpKcHE4ZHgxMi9WUXRyc29rSmluS3htYTlMV1ZGYWx4UlRSRkd3VHBZblg2N094b3JqMHlTTHpFbGRtU241b2pzTjQydWtURHRHN05FTXJaTXFCaXNKcEhZbnVCSDRvc3RHcVZQbDZUSnRvRnp2YjFjT2NMOFljZ1FCZ0hudUttSTAxTUZnQkk4empYUFJJSS9OM0dVK0M5RmJtRjZoVzd6cnI1N3NRdUt6ZStGdTZmdysiLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3NjU3ODcwMzksImlzcyI6ImVwaWNzLmdnIn0.u7__Vh7B9dbvzT2Cyq19OwMUaAIlN8q5jzUDi7IMdeqXccHn53ta7LPJ2rwFTF8n",
+    "userClaimAchivID": "900101",
+    "dayStart": "6:08",
+    "dayEnd": "19:52",
+    "baseInterval": "36",
+    "randomScale1": "5",
+    "randomScale2": "12"
+  },
+  {
+    "userId": "900104",
+    "refreshToken": "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiY2Vxb2hBdnJia3VCcFhJNDVJWS84QT09OkQvOG1haWxCRzNlR09BT2Y4YTRPTFNhb0RrM0RHM3VSUmdMQk00R0hablVjODI5N1RDVVFvOStCYUVMeHFEK3B2V2pNR1Q0U2kzekh6U2JSak5mSVZvOUtCeS9vN2ZYcDZXNm80bTdGZFFiaWppMWhnbEpVRngvT1JpbEhVQXVhQ0hnUEpKN2tsbmVmN1ZhczZ0UDRBVm0vRHNqWGdtQjVWUjNlNWdxb25wMGo5dk5TZXVZOEYrd1ZLNDZ4V3ZKWFJYQnpyME5aNUdoRGRudm5zQ0VDaWxGNXkwSkhoVW1zcXZzQkJsajhzbmx3NjRmNnVrRmE0TzBXeTdVQ1hVUk8iLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3NjU3OTE2NTMsImlzcyI6ImVwaWNzLmdnIn0.RYEOoWpe1zJFNSJeGYYaDlrweN2ZArSUyNKhdGz07mwrl_AH1WDOxbyTdvTYI-5F",
+    "userClaimAchivID": "900104",
+    "dayStart": "20:59",
+    "dayEnd": "11:50",
+    "baseInterval": "31",
+    "randomScale1": "1",
+    "randomScale2": "14"
+  },
+  {
+    "userId": "900108",
+    "refreshToken": "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiYldEUENyV1dXTVJHTGZrOElNMGpIZz09OkZ0Q1dTS2laaHIrZmRJa3F4UlhvaFRaSnFTcUhUdzkzR00veWdQWW5ucEU1ZFlBZ0wrNkM4T2ptNXpGYkJYdXE5c2paWkEwQVcrODh6dVo5bDMvRmdhTmF2QzVGOVB2cW1wVFcwZ0dYRHYwdUsvRENRUXorbFRIT1dvVERrSm9xUkNDOW82VWM0cnFmV0N3SEVXOFFlR0hBNC95ajYydUVpTHdJY1ZXSDZVWUladUlTQjlQWGQ0YnFtZy9IVVdVMHBUT1hKVWVOaXpzUHhSclRkSjNEcVBQanVwSFRBVXg1bTYxUUZRaWdtWnFZWjFvMnNaS2lpeklDNHQvTGFlSHoiLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3NjU3OTgxODgsImlzcyI6ImVwaWNzLmdnIn0.ZnDGUjyH2KDuICXGp-z1xQp-jxj0JBKz1zCgDfIhoDazC2DGUm88jnbg_b8w2wU_",
+    "userClaimAchivID": "900108",
+    "dayStart": "4:59",
+    "dayEnd": "20:30",
+    "baseInterval": "38",
+    "randomScale1": "2",
+    "randomScale2": "18"
+  },
+  {
+    "userId": "900116",
+    "refreshToken": "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiTVJXNmM1VEpFRFNDYkF4bTUzdS9Mdz09OnliRzVFUE5rcVpTSmtnRTU0QVVGQkIvS3RUaWJ3eks2WHFuWUxqbUdnb29TQXEwVVk1a2VhS2tpSXpmaittRlJsci9sUWw0U3pGTStNM1NQZ1ZYSkJXdmpoUlRMMVpmZGxNTjhIMmJwTzhNWnhKV2JjMkswRUthcHlhRHJHdlY1ZkZWMDJwVmlyNXlpQ1FQbE5VL1VveVdBYWt6ZHQ4R3JGUEVqT1NhWUxVdWZPNVdzMG9kLy9PNEMvaXo2OUw3UGpXbWJINWZ5N05pY2xCZGhHbnVtNXYwMUVnb1lEUU9qR29JRzg4MkZVT3dpWHgzdDNTUlJKNlFRT0dKV2EzakUiLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3NjU4MDUzODMsImlzcyI6ImVwaWNzLmdnIn0.X0DwAoAi193ae9L5ZrUdIQQEmeL2ZjVlILZH-HNhjMLyJ1IRgAS4gFghvCKFZOqo",
+    "userClaimAchivID": "900116",
+    "dayStart": "7:01",
+    "dayEnd": "22:42",
+    "baseInterval": "35",
+    "randomScale1": "2",
+    "randomScale2": "19"
+  },
+  {
+    "userId": "900106",
+    "refreshToken": "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiOXBqWmRVYjBjNnRhczNlMFNRTXRidz09OnU1TWFmSTY2R2QzcnZSMDMvNDlBUThVTE9oRDMrNDdKdnBSRC8ydUtETkVhc0N1YUJvZjhpNDJaSDRPL0VsTHZXRjFxeHZkMTlYTDc5K0ZQWjd4WS9jTXZOUVpHTms4a1VQblBUNVZiajlKbVlpaUtrQ3BjQUlBdGtJa2h4UWsvbTdYck5DZVc5YkRhaGRxWkxhT0Z0VTVJL1pQNTZMeUMxYXAyUEJRUTJLNlJldFhNc1V0cEpMT0E3ajBETFBxTHhWR3BWYy9vSThhbkFHdFlpZmRNbUVleThaOXNMeTJad0RkMS9GcjRLdmtvcEx4MUo1RTJjdUJ3Ykp2V0VNWWEiLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3NjU3OTc0MDAsImlzcyI6ImVwaWNzLmdnIn0.PDhxQ2vIz1rJ52o2ziNToWtREe1N0iKZXdVmOt6MriuuIsxFoomNBNcC88DJKkJT",
+    "userClaimAchivID": "900106",
+    "dayStart": "5:23",
+    "dayEnd": "20:40",
+    "baseInterval": "34",
+    "randomScale1": "4",
+    "randomScale2": "16"
+  },
+  {
+    "userId": "900118",
+    "refreshToken": "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiYi9IUm9GSUJJTm5TZ2lqRkJjMlludz09OjNJUGdxYkIxdmhTeHFwMDFPYndOckVtNkRmQStFNW9qczFlSmQ1VlJyZnU3anQ2Z1hZaCtOSjVWa2hPMkdrc3BxalJXZXNRNjFjTnpjS1RSK0dzQ0o3dVdnS1RHa3VLYi80QXNuMXVkLzBoc1ZpOGpWYVlMc004RmVucnpXYUo5dVo3TkZoZ0tLeU1sNm5wcXM2ZlFhdTJKaEE5c3JGTWY5TU5FY0dlMU9QOHZJUGhvOUxIK2xPVFh1SWM4eWMzc2EzUnFhWW5Sam9CaUR0MklySnUrTGVoR2grS2toazZubjZxZTFsUTNzcnA2OHFjZHZFRTBpczE1UTBRbHpFa3AiLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3NjU4MTIzMTYsImlzcyI6ImVwaWNzLmdnIn0.GdCdOMgaTK8csakPMtBtQXqCvlWy5pCjVESdPq0TiINl9lznVhNoALhIS37I4_Lq",
+    "userClaimAchivID": "900118",
+    "dayStart": "6:14",
+    "dayEnd": "22:40",
+    "baseInterval": "36",
+    "randomScale1": "4",
+    "randomScale2": "7"
+  },
+  {
+    "userId": "900151",
+    "refreshToken": "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoic21iR0VvNTVub0dqb01kUVpLODIydz09OnNqNlI1UWRmRkxzbk9ucStEZEdTc3Y2WDVlNUJKQXh6STlpZXZCaEw5WEJ0TkZLMWZNczdIUEZQN3haOXJ5d0NvMElOQVFCZ1RNYUlXQWQ1YXRiNG1NSDJ0WXU0VHBUNFQ5ekxmZFYwWjR2Zm1TRFYvZkFuY3AzR1pzOXF4RnR1WEo3cEtKV3hVb3RqS2RkZE9vS3drWVFCSGpqTzNsS2MrRWorL0tMcjZBejBHM2lKMGltQjVhUm45d29ZOHp3R3Y3dFNOUkY0dXhZQTh4WkplZkJvRTh4S3Npc3RnQk9EMUdWZ0Y3SnkwWU84ckV6RHRnb0hPa3gzTDV3RjBQajQiLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3NjU4NzQ0MzMsImlzcyI6ImVwaWNzLmdnIn0.GkavY4E7UnoWMvHfQnUMGjmTNyEwYu0QExMK3TpolCbumF7i32VnpXkgxa7sDJ6Q",
+    "userClaimAchivID": "900151",
+    "dayStart": "7:00",
+    "dayEnd": "21:46",
+    "baseInterval": "30",
+    "randomScale1": "0",
+    "randomScale2": "14"
+  },
+  {
+    "userId": "900152",
+    "refreshToken": "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoibmRyT3RoVmUrQzdDUXhLSEJsajU0QT09OlZ4RzJEYTdlTFFaalNweDZJUnF5aXV5aEVkNmlCNDd0RFc0dXIxNFZvbGExVk9ZNktERW1tZmxrYkRSN25tZjF2eWNZejJJWW9NdWg5c2VtTDFhclNvbGgxaU1EN09yU2VDZ01kUG1abWI3QUNqclRQa2RvTk0xN2N2dzZuR2JmVmdGd1cvTWdUbkNsRG5wSlFlYTlmSWJBdmxBVWNKU0hvTy9WUDIxNHFTTkZIeFhDNjBBQVRrdS8xdU4yZEFIOEE1alc3ZTJQQmIwbVg0WHc0VU5JOE9GRk9MMFRHcWsxY0lvelduazUrL2U2L1NaeG10aGIzTFNCTXhBUVZ1RzYiLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3NjU4NzQ1ODAsImlzcyI6ImVwaWNzLmdnIn0.zz2L3SFCuLuR6hRHApHTad9zKDFi5Puh7Z_9tx2AG9Tosxpd98JM9DP_fLMHoKd5",
+    "userClaimAchivID": "900152",
+    "dayStart": "20:47",
+    "dayEnd": "11:15",
+    "baseInterval": "35",
+    "randomScale1": "5",
+    "randomScale2": "10"
   }
-  ]
+]
