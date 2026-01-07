@@ -72,8 +72,6 @@ const CONFIG = {
     BASE_URL_MONEY: process.env.BASE_URL_MONEY,
     BASE_URL_SPRAY: process.env.BASE_URL_SPRAY,
     BASE_URL_ACH: process.env.BASE_URL_ACH,
-	BASE_URL_OPENPACK: process.env.BASE_URL_OPENPACK,
-
 	//PORT = process.env.PORT || 3000;
     USERS_FILE: 'users.json',
 };
@@ -84,7 +82,6 @@ const BASE_URL_MONEY = CONFIG.BASE_URL_MONEY;
 const BASE_URL_SPRAY = CONFIG.BASE_URL_SPRAY;
 const BASE_URL_ACH = CONFIG.BASE_URL_ACH;
 const USERS_CONFIG = CONFIG.USERS_FILE;
-const BASE_URL_OPENPACK = CONFIG.BASE_URL_OPENPACK;
 
 // Global storage for user data and logs
 let userData = {};
@@ -321,7 +318,7 @@ async function claimAchievements(userId) {
     }
 
     let totalClaimed = 0;
-    const userAchievementsUrl = `${BASE_URL_ACH}/${user.userClaimAchivID}/user`;
+    const userAchievementsUrl = `${BASE_URL_ACH}/${user.userId}/user`;
     const headers = {
         'x-user-jwt': user.jwtToken,
     };
@@ -399,32 +396,6 @@ async function claimAchievements(userId) {
     }
 }
 
-// Open pack
-async function openPack(userId, packId) {
-    const user = userData[userId];
-    if (!user?.jwtToken) return false;
-
-    const result = await makeAPIRequest(
-        CONFIG.BASE_URL_OPENPACK,
-        'POST',
-        { 'x-user-jwt': user.jwtToken },
-        { packId },
-        userId
-    );
-
-    if (result.success) {
-        user.packsOpened++;
-        logActivity(userId, `✅ Pack opened: ${packId}`);
-        return true;
-    } else if (result.status === 401) {
-        const refreshSuccess = await refreshToken(userId);
-        if (refreshSuccess) return await openPack(userId, packId);
-    }
-    
-    logActivity(userId, `❌ Pack open failed: ${result.error}`);
-    return false;
-}
-
 // BLOCK 3: Spinner Functionality - FIXED: Always schedule next spin even on error
 async function executeSpin(userId) {
     const user = userData[userId];
@@ -473,7 +444,6 @@ async function executeSpin(userId) {
             const prizeMap = {
                 11755: '5,000 Spraycoins',
                 11750: 'Standard Box 2025',
-                11782: 'New Standard Box 2025',
                 11749: '500 Spraycoins',
                 11754: '1,000,000 Spraycoins',
                 11753: '100,000 Spraycoins',
@@ -485,17 +455,7 @@ async function executeSpin(userId) {
             user.spinCount++;
             spinSuccess = true;
             
-			    // Check if we got a pack (IDs: 11848, 11782, 11750)
-    if ([11782, 11750].includes(resultId) && spinData.packs && spinData.packs.length > 0) {
-        const packId = spinData.packs[0].id;
-        logActivity(userId, `🎁 Got pack from spin: ${packId}`);
-        await openPack(userId, packId);
-    } else {
-        logActivity(userId, `🎰 Spin result: ${prizeName}`);
-    }
-
-			
-            //logActivity(userId, `🎉 Spin successful! Received: ${prizeName}`);
+            logActivity(userId, `🎉 Spin successful! Received: ${prizeName}`);
         }
 
     } catch (error) {
