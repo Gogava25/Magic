@@ -243,7 +243,7 @@
         parts.push(`
           <div class="user-card" data-user="${id}">
             <div class="user-head">
-              <h3>${id}</h3>
+              <h3>${u.userNick ? `${id} - [${u.userNick}]` : id}</h3>
               <div class="row">
                 <button class="btn small" data-act="refresh" data-id="${id}">Refresh JWT</button>
                 <button class="btn small" data-act="spin" data-id="${id}">Spin</button>
