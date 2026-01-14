@@ -268,5 +268,105 @@
     "baseInterval": "36",
     "randomScale1": "4",
     "randomScale2": "18"
+  },
+  {
+    "userId": "901987",
+    "refreshToken": "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiTGY2V2VPRENUZFg2aHQybWd2TTVOdz09OnJvbHB3SnJyd0xtOUlnVE44UzZEOUdVeTJlbGdTbE56WXdiSHU0U2sydEpSY0JLalFRblhqcU5jSmd3NXNPTS9YblM2QWU5WU5DcjVhTTVFNXFwUHduT2FGc1Y3Qmc5cnpHcTlMV1Z4MmtZT0Q2RTFUNVpMZTI5R0F0WHZBVGxmcUF5U3RyMk5mVzZtekVoQXRqZUNCQTMzWFZxTE5zdWJuRTJJOTZUelBuZm5seGtGbTVsYWY0UUsyZkJGQmQ1Y1hGRDRadk1uV1RJOVhOSmcrUkFNWnNoZXdlT1VDV05USk9VZFlkWXUyYnVBeTZmUGluY1B5MjFYQjB5blhxZlEiLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3Njc4MDAyMjAsImlzcyI6ImVwaWNzLmdnIn0.TLXsAe33pPeoqCQHKX2H0mmEQXe95CBfFhswAkzvRbD5GQeeHcRyp7gSolgwbcbK",
+    "userNick": "strykerHam",
+    "dayStart": "23:17",
+    "dayEnd": "14:55",
+    "baseInterval": "36",
+    "randomScale1": "0",
+    "randomScale2": "11"
+  },
+  {
+    "userId": "901988",
+    "refreshToken": "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiRmhGVE1ZY08xWkxQc3Nnc2YrU1pYZz09Okk2QmpiankxMWtvb2NaTkF2QjhWV01udHduNUFiOHNTbzlLaDFBMTF3V2JVZnU2aFh2ekdENlU1UnlGa0R6NHRBMFFqbG9YWjJ2cGxZVzJ0ODVUTUkydmg0WDl3SXhKaE5nMFFHSGdKVUQ1UTFOUlVxcTIvZ0pSeUZHcXJ1MVhsbVd3a0NMWkxhZ2FUU1VGcmdDcEZieWY0K2RBb1RrbXlPYXByVEE5bDBCL1lqbWZyaXljMStoaWk2c3hBdEMzUTNFeGtjU2NjeDZLMlVqd2xBbG1PUGo2R29HSXhvTUVNYktEV3NtVjhOckU2NXRQRHNzU1l6eU12dE1sU0QwL24iLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3Njc4MDAzNDgsImlzcyI6ImVwaWNzLmdnIn0.Cm-hQOKaS8zGfXpIlGTAiPG5-RivpEJJrCuvhI_-zJlm_p0VUEyHwFcHUrrNpdxn",
+    "userNick": "NovaReign",
+    "dayStart": "23:04",
+    "dayEnd": "14:21",
+    "baseInterval": "31",
+    "randomScale1": "1",
+    "randomScale2": "9"
+  },
+  {
+    "userId": "901989",
+    "refreshToken": "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiWnVqdkxxWk45QzBVK3hoZm8yTUE2UT09OmRyTVduQTE2U0xqNitpeWhwU2hqQ3lOMVJqMmhhSWl0aXdZVTBaTmY2TlMxdVY2ZkxQb3UrUUlrRWV0eVpoWEV5aGNOQ3J2N3Z3bEtIMjVMMERrRENOSzBLVE05WFBpV1JOKzBlNkdHRjg2RzM1Q1hucDR2UkdlOE1ISUVoandSU2ZZNDQ4TWVUWGV5RlkwZlJJdDhCSStEMjZ4akVjY0Rmd3dMK2lMZ1lxalhLbFJ1REl2RjZFU3l0akdiZFJnamp4NVZiN2t1M3M2NGFNdWU2czlJc3dNVUVVY20yZWtyV1VtTjBhcTYzckQ1dVpYSVM3ZDF0U2ZndnNlOXF3MkQiLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3Njc4MDA1NzMsImlzcyI6ImVwaWNzLmdnIn0.A33_sC8goirgboroa9BnqwxVmQcVTXnfc6mqQ6p1oK_1g1djaENs-lu1ycVpWIXa",
+    "userNick": "HelixSeven",
+    "dayStart": "5:41",
+    "dayEnd": "19:59",
+    "baseInterval": "37",
+    "randomScale1": "3",
+    "randomScale2": "13"
+  },
+  {
+    "userId": "904250",
+    "refreshToken": "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiZys5N095U0lVSmh6Q3RYMUgvMXNQZz09Om9JYllrZzIvc2NydUxHeVVTdENlOFRMekM2aVdOZ0lVa09CaDVQRW10VkVyczVGS1crUFdvdDd4aE4zVUVhdWxoZm1CMHQyaHNyQVFnQjZRSVNyZUNhZ1BYYzVtYmpLRzVOWlZVS2IvVFZ2Ri9qWlh2REhlTDZUTzUvZE41VHNFeFBJS3ZxdXFmK2hjWkpTWXQweTVWeEFiQ0x1NnkzZFFQRTJiTHJhKy9uN0lDRnpvVTdrc2R1ckJ2TTNSc2lXcC9yU3pjWEV6akpiRHFSaTRtZlk1elZXeDBPd1VjZWlMQ3h3bkk5clRlYUhtUXdhT2p2ZUxKMkRzZlFTNjJ0L3MiLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3Njg0MjA2MDAsImlzcyI6ImVwaWNzLmdnIn0.P1uWxFuKV29kg1OROagZL1PeJSr-yyxvynzsYcaZPehDDF8bdkwic32ZGeegxJXb",
+    "userNick": "KratosXwac",
+    "dayStart": "5:57",
+    "dayEnd": "21:26",
+    "baseInterval": "32",
+    "randomScale1": "2",
+    "randomScale2": "15"
+  },
+  {
+    "userId": "904251",
+    "refreshToken": "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoicG5BS0E1d25jWFoyTElpN3IrcitRZz09OktFbmdNdzRacTJKd29FWkxJeUFWdnhmOW9OQit4Mi9EL2FYb1VOalBCN0hZUjNyTWV2QXp2TTZFRFpnVjNEZjBEUkszR2lFekFyYkFhb0E3L1NYNnB1ZGFWL0ZpMkErbkkyRXVqV0lEdFc1MU1xVVZFRis5U3NIUFF5MHllUWhLaThaOExMaHBhZ0xMR0hRRjFFQk9CK1JDdit4U3hRUW9hTS9sTWJqUEUwOXBLekhCZ3l1OXZvWmVLdzlTcXloaW5lVStYUmRyRWJ6Qnpxa2pnZ1RBN3hjbzg5RnBhNlB6MGw5alN0UXM2a2p1RHlVcWdYQnovcURFZDVaY2FabHAiLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3Njg0MjA3MzQsImlzcyI6ImVwaWNzLmdnIn0.8__WlKKLhw1hzlQXpGhaCBrDnPFSNtWvSImlIbBU_OhZXyBYWGS01WFt1sq3YzgI",
+    "userNick": "Mirage_9",
+    "dayStart": "23:40",
+    "dayEnd": "12:48",
+    "baseInterval": "36",
+    "randomScale1": "2",
+    "randomScale2": "19"
+  },
+  {
+    "userId": "904260",
+    "refreshToken": "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoidXFKWFIzQzdhWjY4c2NqQXczMGR0Zz09OjM5a3B2MDRneC9hVlh4SFlGcmpqbjBpcjBaN201bVRlWldtNjRuRmxUcFQ4VFNwbFRIcnl4andjbmdJZDhja1FUaURXbU03bFBZbWhPYmFKc1krR2NId05kS0V4bXNzSVVoWERrc0Q1VmhXSEw0N2ZnY0RybTJhT0I4ZHlCVDRnTDN6dzhwUE40VTZ6NCtaZ0x4WkVaNUZ1TEtpMkpMdEJtQUJNQ0ZjK3FBV3psWjV0cU5DUWpwM2dqMDdPRk5qMTFYVDdYaEl4NitETmJrcHdMWklwL1d0dDh1U1RNVnFCNXhDVjkvK0JtNEFrY2wwV3ZDeWgwc1BGWlZOa3R5VloiLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3Njg0MjIyMTUsImlzcyI6ImVwaWNzLmdnIn0.CFx_frO_BtfqU8ihc5tGA4s6VX1vSAcl8V4VHxAJE9mq1oZUG_k0Iir5Fsm-TAWN",
+    "userNick": "WardenOne",
+    "dayStart": "21:51",
+    "dayEnd": "14:22",
+    "baseInterval": "37",
+    "randomScale1": "1",
+    "randomScale2": "11"
+  },
+  {
+    "userId": "904261",
+    "refreshToken": "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiK01zM3dxZHRnUUZpUkZSYlFkNkFodz09OmViemZmU1VSU3ZyZGhadjNocmZQcy9RU0YySytKL3FmZCtMM3VOanZYWDR6RERzUTNJLzBzZjdMd3ZRcStZL1E4QVF4N1FUUGdiQ09IUWRDN0FxZUh3ZlhsVXQ4M2w3VXo3UFllU1Yva1hUMkppb1NPaVlRdG1SSm5EdERIK1h4RHIwZWk2TU5xb2xiMzVwSGkvL0UyeWZmN0MrQVNkdWg2ZWFtUUlBbysrakFFWGpHZGlKZjIwa2hUV0twOVo5L2RyWlNFU1VMaHhEaGs4aEE1NE9CMXdhNmFxQWVZSGx2Y1NkUWlKZ3dEdVR2Y0dhSUNhLzMzVlNrMEQ5Wkloc1oiLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3Njg0MjIzMjAsImlzcyI6ImVwaWNzLmdnIn0.DULFNsqcjWcZV1k0DAA2wdvhcRGAzSWdy-_k1Jb4jk3r5oMVZEBvRRdQFXP0LM_T",
+    "userNick": "Eclips-fsw",
+    "dayStart": "22:30",
+    "dayEnd": "12:04",
+    "baseInterval": "30",
+    "randomScale1": "1",
+    "randomScale2": "17"
+  },
+  {
+    "userId": "904264",
+    "refreshToken": "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiOFpaNUN6YWd5N2xnN3ROUDVXYUpjdz09OmlGNzFTNVg5bkQ4WUwraUduMm5MR1lvSzlzYWt4OXZINk9kYWx1R3NjSURCNmhpSk9yQkdGUEdxMUdieEpkNGxPTHJNSk5STkMvN0JDbVc3RkUyeGNWa0pqMXV3Y0thbHA1ckZ2STR3TTJ6eWFHMXV5UWExNmRTWDlSYnliYVptTktHZkhBalNVTExGU1A1Yk9UWVFpMG5ucHE3NWNjVkR1aTVhNzIyUG85U0R1QzRQUXR3dXdscGR1L2FBajZXSEhGZXpFTzRwRWJjemZLRDdSZHpZWjdzcnhObmNydmU5elVkZnljaUJQenI5b3Y4VU0zZElZWDRxRUttNHMrb3YiLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3Njg0MjI0NDAsImlzcyI6ImVwaWNzLmdnIn0.MI3BoOOvi4RTceSFBDR-xR4vNV04Ls0aC1-9ikKE5qCi03ql73RuM7bzEy7Y0nkj",
+    "userNick": "Cypher_6",
+    "dayStart": "12:58",
+    "dayEnd": "4:28",
+    "baseInterval": "35",
+    "randomScale1": "1",
+    "randomScale2": "17"
+  },
+  {
+    "userId": "904265",
+    "refreshToken": "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoidlQweGt1dlZvVXR6N0Z1NG1CSnRKUT09OjdNcDZyOGxmenUrbFlTMW9MaDZHcW1kdHVDcWk1L0JwQzR6NlNRYzZVV3Vkdm1OeFc4YjkraUVXc0VDODBtWnp0ck1EYTFveXdzWTZvbUZublV6dEUzTkxmMjk1T0NjcUdzME4zK1Q5SXlzYXllbHhsYkVleVpGZkE2SHNCUGtseUIrRFBscmw4N3gzWVFlcGFVQ2JsOXVuQ3Z3YXpPTXdjeUpDeFVIeUtKYy9EVUNFQXhhVnZTU0t0WjFCNDV5TFEvN1lzaWgrVDJHSU9qN1FIRS8xMzZIVUlJWWVJYnl6T2pLWFNUMzVLdGsrTFRKODlyQXVxSmFNZkI1SGdVcloiLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3Njg0MjI1NDMsImlzcyI6ImVwaWNzLmdnIn0.I4Afcb8Xvh06iB7EZtpzh2YdduRsyvrXJXrzpRLWA3yEOvqBzS54TtAlhhNEq-ea",
+    "userNick": "V0rtex44",
+    "dayStart": "13:10",
+    "dayEnd": "4:26",
+    "baseInterval": "37",
+    "randomScale1": "0",
+    "randomScale2": "16"
+  },
+  {
+    "userId": "904266",
+    "refreshToken": "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiQ0V4dGozMkp0am4vSXZYMzFpaDZMQT09OkxETmhPT1B4Z1ZmZnlPY0o4bGp1cy9FMUtmcHpUbVRWN2dwaDVMQjl3R3VjZDBnK21yWHIwcFh5MmtZVGlJa1FsM3BpWFRKZjZ2VlovYnFsN1RtMXNGN3lvSUtjaURreFpMRWxpTmxYS0xPT3lpL0Y0aGFOdjNtRnNKUFRHZmNxUjU2d1A3dWI2dDNPUTZJQnNqTG1FVkFLTGpaNnIydnBQclZFT1F4SWhoSmFJZ0liMG04YzRnclpzZHZJeWttT1c4YTViQ3lQbjNwSno4aVBxRDZUTEJ5REx6eElxZGpvdEY4U3FRdDhwKzVrVnR3NkdBK3dqS0R1a2t5bTl2NEsiLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3Njg0MjI2NTQsImlzcyI6ImVwaWNzLmdnIn0.yd5awopo6mahr1nJ4d2RxLj1HsRcMAhZFoJ8BarQRFCV2yIbzInTcGu0tYKPu6xN",
+    "userNick": "TitanForge",
+    "dayStart": "5:58",
+    "dayEnd": "21:24",
+    "baseInterval": "36",
+    "randomScale1": "0",
+    "randomScale2": "16"
   }
 ]
