@@ -473,7 +473,7 @@ async function executeSpin(userId) {
             const prizeMap = {
                 11755: '5,000 Spraycoins',
                 11750: 'Standard Box 2025',
-                11881: 'Krakow Box 2026',
+                11914: 'Krakow Box 2026',
                 11782: 'New Standard Box 2025',
                 11749: '500 Spraycoins',
                 11754: '1,000,000 Spraycoins',
@@ -486,8 +486,8 @@ async function executeSpin(userId) {
             user.spinCount++;
             spinSuccess = true;
             
-			    // Check if we got a pack (IDs: 11848, 11782, 11750)
-    if ([11782, 11750, 11881].includes(resultId) && spinData.packs && spinData.packs.length > 0) {
+			    // Check if we got a pack (IDs: 11914, 11782, 11750)
+    if ([11782, 11750, 11914].includes(resultId) && spinData.packs && spinData.packs.length > 0) {
         const packId = spinData.packs[0].id;
         logActivity(userId, `🎁 Got pack from spin: ${packId}`);
         await openPack(userId, packId);
