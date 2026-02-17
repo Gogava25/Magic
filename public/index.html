@@ -266,9 +266,9 @@
               <div>
                 ${ach ? `
                   <div class="grid-2 small">
-                    <div>#1 Start+5m</div><div><code class="time">${fmtUTC(ach.claim1ISO)}</code> · ${minsFromNow(ach.claim1ISO)}</div>
-                    <div>#2 +5h</div><div><code class="time">${fmtUTC(ach.claim2ISO)}</code> · ${minsFromNow(ach.claim2ISO)}</div>
-                    <div>#3 End-5m</div><div><code class="time">${fmtUTC(ach.claim3ISO)}</code> · ${minsFromNow(ach.claim3ISO)}</div>
+                    <div>#1 Start+35m</div><div><code class="time">${fmtUTC(ach.claim1ISO)}</code> · ${minsFromNow(ach.claim1ISO)}</div>
+                    <div>#2 +8h</div><div><code class="time">${fmtUTC(ach.claim2ISO)}</code> · ${minsFromNow(ach.claim2ISO)}</div>
+                    <div>#3 End-25m</div><div><code class="time">${fmtUTC(ach.claim3ISO)}</code> · ${minsFromNow(ach.claim3ISO)}</div>
                   </div>` : '<span class="muted">Not scheduled yet (will appear after daily plan initializes)</span>'
                 }
               </div>
@@ -276,14 +276,14 @@
               <div class="muted">Next Spin</div>
               <div><code class="time">${fmtUTC(u.nextSpinTime)}</code> · ${minsFromNow(u.nextSpinTime)}</div>
 
-              <div class="muted">Spins / Achievements Claimed</div>
+              <div class="muted">Sprays / A4 Claimed</div>
               <div>${u.spinCount ?? 0} / ${u.achievementsClaimed ?? 0}</div>
 
-              <div class="muted">Last Funds / Daily Funds Checks</div>
+              <div class="muted">Spraycoin / Total checks</div>
               <div>${(u.lastFunds ?? 0).toLocaleString()} / ${u.dailyFundsChecks ?? 0}</div>
 			  
 			  <div class="muted">Token</div>
-              <div class="muted small"><pre class="logs" id="logsBox">${u.jwtToken ?? 0}</pre></div>
+              <div class="muted small"><pre class="logs">${u.jwtToken ?? 0}</pre></div>
             </div>
           </div>
         `);
