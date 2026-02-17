@@ -606,9 +606,9 @@ function logActivity(userId, message) {
 //   effectiveEnd   = EndDay (fixed, same as users.json)
 //
 // We then schedule Achievements:
-//   #1  effectiveStart + 5 minutes
-//   #2  #1 + 5 hours
-//   #3  effectiveEnd - 5 minutes
+//   #1  effectiveStart + 35 minutes
+//   #2  #1 + 8 hours
+//   #3  effectiveEnd - 25 minutes
 //
 // After #3, we schedule the next day's plan (new randomization).
 // Also exposes effective window so isWithinActiveWindow() uses it (spins + funds).
@@ -763,9 +763,9 @@ function scheduleDailyPlan(userId) {
   );
 
   // Achievements times:
-  const claim1 = addMs(effectiveStart, minutesToMs(5));     // Start(±20m) + 5m
-  const claim2 = addMs(claim1,       minutesToMs(6 * 60));  // +6h from claim1
-  const claim3 = addMs(effectiveEnd, -minutesToMs(5));      // End - 5m
+  const claim1 = addMs(effectiveStart, minutesToMs(35));     // Start(±20m) + 35m
+  const claim2 = addMs(claim1,       minutesToMs(8 * 60));  // +8h from claim1
+  const claim3 = addMs(effectiveEnd, -minutesToMs(25));      // End - 25m
 
   // Helper: schedule a single claim if still in the future
   const scheduleClaim = (when, label) => {
@@ -790,9 +790,9 @@ function scheduleDailyPlan(userId) {
     logActivity(userId, `⏰ ${label} scheduled for ${when.toUTCString()} (in ${Math.round(delay/60000)}m)`);
   };
 
-  scheduleClaim(claim1, 'Achievements #1 (Start+5m)');
-  scheduleClaim(claim2, 'Achievements #2 (+5h)');
-  scheduleClaim(claim3, 'Achievements #3 (End-5m)');
+  scheduleClaim(claim1, 'Achievements #1 (Start+35m)');
+  scheduleClaim(claim2, 'Achievements #2 (+8h)');
+  scheduleClaim(claim3, 'Achievements #3 (End-25m)');
 
   // Rollover: after end-of-day (add a small buffer), compute the next day plan
   const rolloverAt = addMs(effectiveEnd, minutesToMs(2));

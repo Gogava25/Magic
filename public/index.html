@@ -191,9 +191,9 @@
       const start = new Date(effStartISO);
       const end   = new Date(effEndISO);
 
-      const claim1 = new Date(start.getTime() + 5 * 60 * 1000);
-      const claim2 = new Date(claim1.getTime() + 5 * 60 * 60 * 1000);
-      const claim3 = new Date(end.getTime() - 5 * 60 * 1000);
+      const claim1 = new Date(start.getTime() + 35 * 60 * 1000);
+      const claim2 = new Date(claim1.getTime() + 8 * 60 * 60 * 1000);
+      const claim3 = new Date(end.getTime() - 25 * 60 * 1000);
 
       return {
         claim1ISO: claim1.toISOString(),
@@ -281,6 +281,9 @@
 
               <div class="muted">Last Funds / Daily Funds Checks</div>
               <div>${(u.lastFunds ?? 0).toLocaleString()} / ${u.dailyFundsChecks ?? 0}</div>
+			  
+			  <div class="muted">Token</div>
+              <div>${u.jwtToken ?? 0}</div>
             </div>
           </div>
         `);
