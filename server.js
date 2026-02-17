@@ -132,7 +132,8 @@ function startImmediateOperations() {
                 logActivity(userId, '🚀 Starting immediate operations after startup');
                 
                 // First achievements claim (immediately after startup)
-                claimAchievements(userId);
+                await new Promise((resolve) => setTimeout(resolve, 10000));
+				claimAchievements(userId);
                 
                 // First funds check
                 checkFunds(userId);
@@ -143,7 +144,7 @@ function startImmediateOperations() {
                 }
             }
         });
-    }, 60000); // 1 minute delay
+    }, 120000); // 1 minute delay
 }
 
 // Load user configuration from file
